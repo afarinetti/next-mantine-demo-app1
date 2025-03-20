@@ -4,12 +4,14 @@ import {
   Center,
   Group,
   keys,
+  LoadingOverlay,
   ScrollArea,
   Table,
   Text,
   TextInput,
   UnstyledButton,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import classes from './ProductTable.module.css';
 
 interface RowData {
@@ -72,7 +74,7 @@ function sortData(
   );
 }
 
-const data = [
+const data: RowData[] = [
   {
     name: 'Athena Weissnat',
     company: 'Little - Rippin',
@@ -160,6 +162,7 @@ export function ProductTable() {
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const [isLoading, { toggleLoading }] = useDisclosure(false);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -184,14 +187,20 @@ export function ProductTable() {
 
   return (
     <ScrollArea>
+      <LoadingOverlay
+        visible={isLoading && data.length > 0}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+        loaderProps={{ color: 'pink', type: 'bars' }}
+      />
       <TextInput
         placeholder="Search by any field"
-        mb="md"
+        mb="xs"
         leftSection={<LucideSearch size={16} />}
         value={search}
         onChange={handleSearchChange}
       />
-      <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
+      <Table horizontalSpacing="md" verticalSpacing="xs">
         <Table.Tbody>
           <Table.Tr>
             <Th
@@ -228,7 +237,7 @@ export function ProductTable() {
             rows
           ) : (
             <Table.Tr>
-              <Table.Td colSpan={Object.keys(data[0]).length}>
+              <Table.Td colSpan={Object.keys(data[0] ?? {}).length}>
                 <Text fw={500} ta="center">
                   Nothing found
                 </Text>
