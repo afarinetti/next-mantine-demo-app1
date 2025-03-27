@@ -162,7 +162,7 @@ export function ProductTable() {
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [isLoading, { toggleLoading }] = useDisclosure(false);
+  const [isLoading] = useDisclosure(false);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
